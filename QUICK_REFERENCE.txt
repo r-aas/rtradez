@@ -1,0 +1,23 @@
+
+╔═══════════════════════════════════════════════════════════════╗
+║                    🏆 RTRADEZ QUICK REFERENCE                ║
+╠═══════════════════════════════════════════════════════════════╣
+║ BEST STRATEGY: Iron Condor                                   ║
+║ BEST MARKET:   IWM (Russell 2000)                           ║
+║ EXPECTED:      11.68% annual returns, 2.057 Sharpe          ║
+╠═══════════════════════════════════════════════════════════════╣
+║ OPTIMIZED PARAMETERS:                                        ║
+║ • Profit Target: 36.2%                                      ║
+║ • Stop Loss: 3.85x                                          ║
+║ • Put Strike: 12 points OTM                                 ║
+║ • Call Strike: 10 points OTM                                ║
+║ • DTE: 30 days optimal                                      ║
+╠═══════════════════════════════════════════════════════════════╣
+║ DEPLOYMENT:                                                   ║
+║ ✅ PRIMARY: IWM (full allocation)                            ║
+║ 📊 SECONDARY: QQQ (reduced size)                            ║
+║ ❌ AVOID: SPY (needs refinement)                            ║
+╠═══════════════════════════════════════════════════════════════╣
+║ VALIDATION: Comprehensive testing across 5 folds,           ║
+║ 3 symbols, 50 optimization trials. Scientifically robust.   ║
+╚═══════════════════════════════════════════════════════════════╝

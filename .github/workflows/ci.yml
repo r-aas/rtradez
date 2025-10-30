@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        version: "latest"
+
+    - name: Set up Python ${{ matrix.python-version }}
+      run: uv python install ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        uv sync --dev
+
+    - name: Lint with ruff
+      run: |
+        uv run ruff check .
+
+    - name: Check formatting with black
+      run: |
+        uv run black --check .
+
+    - name: Type check with mypy
+      run: |
+        uv run mypy src/
+
+    - name: Test with pytest
+      run: |
+        uv run pytest --cov=src/rtradez --cov-report=xml
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Set up Python
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --dev
+
+    - name: Run safety check
+      run: |
+        uv add safety
+        uv run safety check
+
+    - name: Run bandit security linter
+      run: |
+        uv add bandit
+        uv run bandit -r src/
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Set up Python
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --dev
+
+    - name: Build documentation
+      run: |
+        cd docs
+        uv run sphinx-build -b html . _build -W
+
+  examples:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+
+    - name: Set up Python
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --dev
+
+    - name: Run quick start example
+      run: |
+        uv run examples/quick_start.py
+
+    - name: Run sklearn interface demo
+      run: |
+        uv run examples/sklearn_interface_demo.py
+
+    - name: Run caching demo
+      run: |
+        uv run examples/caching_and_optimization_demo.py
