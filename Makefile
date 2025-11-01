@@ -1,92 +1,149 @@
-.PHONY: help install dev-install test lint format type-check clean docs serve-docs
+# RTradez Development Makefile
+#
+# This Makefile provides convenient commands for development tasks
+# including testing, coverage, linting, and documentation.
 
-help:  ## Show this help message
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
+.PHONY: help install test test-unit test-integration test-coverage test-quick
+.PHONY: lint format type-check clean clean-coverage docs
+.PHONY: build publish dev-setup ci
 
-install:  ## Install package dependencies
-	uv sync
+# Default target
+help:
+	@echo "RTradez Development Commands"
+	@echo "============================"
+	@echo ""
+	@echo "Setup:"
+	@echo "  install          Install project dependencies with uv"
+	@echo "  dev-setup        Full development environment setup"
+	@echo ""
+	@echo "Testing:"
+	@echo "  test             Run all tests"
+	@echo "  test-unit        Run unit tests only"
+	@echo "  test-integration Run integration tests only"
+	@echo "  test-coverage    Run tests with coverage reporting"
+	@echo "  test-quick       Run quick tests (exclude slow tests)"
+	@echo ""
+	@echo "Code Quality:"
+	@echo "  lint             Run all linting checks"
+	@echo "  format           Format code with black and ruff"
+	@echo "  type-check       Run mypy type checking"
+	@echo ""
+	@echo "Coverage:"
+	@echo "  coverage         Generate detailed coverage report"
+	@echo "  coverage-html    Generate HTML coverage report"
+	@echo "  coverage-xml     Generate XML coverage report"
+	@echo "  clean-coverage   Clean coverage files"
+	@echo ""
+	@echo "Maintenance:"
+	@echo "  clean            Clean build artifacts and cache"
+	@echo "  docs             Build documentation"
+	@echo "  build            Build package"
+	@echo "  ci               Run CI pipeline locally"
 
-dev-install:  ## Install package in development mode with dev dependencies
-	uv sync --dev
-	uv run pre-commit install
+# Installation and setup
+install:
+	@echo "📦 Installing dependencies with uv..."
+	uv sync --all-extras --dev
 
-test:  ## Run tests
-	uv run pytest
+dev-setup: install
+	@echo "🛠️  Setting up development environment..."
+	@echo "📝 Installing pre-commit hooks..."
+	uv run pre-commit install || echo "⚠️  pre-commit not available, skipping hooks"
+	@echo "✅ Development environment ready!"
 
-test-cov:  ## Run tests with coverage
-	uv run pytest --cov=src/rtradez --cov-report=html --cov-report=term
+# Testing targets
+test:
+	@echo "🧪 Running all tests..."
+	./scripts/run_tests.sh all
 
-test-fast:  ## Run tests excluding slow tests
-	uv run pytest -m "not slow"
+test-unit:
+	@echo "🧪 Running unit tests..."
+	./scripts/run_tests.sh unit
 
-lint:  ## Run linting (ruff)
-	uv run ruff check .
+test-integration:
+	@echo "🔗 Running integration tests..."
+	./scripts/run_tests.sh integration
 
-lint-fix:  ## Run linting with auto-fix
-	uv run ruff check --fix .
+test-coverage:
+	@echo "📊 Running tests with coverage..."
+	./scripts/run_tests.sh coverage --html --xml --json
 
-format:  ## Format code with black
-	uv run black .
+test-quick:
+	@echo "⚡ Running quick tests..."
+	./scripts/run_tests.sh quick
 
-format-check:  ## Check code formatting
-	uv run black --check .
+# Coverage targets
+coverage:
+	@echo "📊 Generating detailed coverage report..."
+	uv run python scripts/test_coverage.py --verbose --output coverage_report.json
 
-type-check:  ## Run type checking with mypy
+coverage-html:
+	@echo "📊 Generating HTML coverage report..."
+	uv run pytest --cov=src/rtradez --cov-report=html
+
+coverage-xml:
+	@echo "📊 Generating XML coverage report..."
+	uv run pytest --cov=src/rtradez --cov-report=xml
+
+clean-coverage:
+	@echo "🧹 Cleaning coverage files..."
+	rm -rf htmlcov/
+	rm -f coverage.xml
+	rm -f coverage_report.json
+	rm -f .coverage
+
+# Code quality targets
+lint:
+	@echo "🔍 Running linting checks..."
+	@echo "  📝 Running ruff..."
+	uv run ruff check src/ tests/
+	@echo "  🎨 Running black check..."
+	uv run black --check src/ tests/
+	@echo "  🔍 Running mypy..."
 	uv run mypy src/
 
-quality:  ## Run all quality checks (lint, format, type)
-	$(MAKE) lint
-	$(MAKE) format-check
-	$(MAKE) type-check
+format:
+	@echo "🎨 Formatting code..."
+	@echo "  🎨 Running black..."
+	uv run black src/ tests/
+	@echo "  📝 Running ruff fix..."
+	uv run ruff check --fix src/ tests/
 
-quality-fix:  ## Run all quality fixes
-	$(MAKE) format
-	$(MAKE) lint-fix
+type-check:
+	@echo "🔍 Running type checking..."
+	uv run mypy src/
 
-ci:  ## Run full CI pipeline (quality + tests)
-	$(MAKE) quality
-	$(MAKE) test
-
-clean:  ## Clean up cache and build artifacts
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
+# Maintenance targets
+clean:
+	@echo "🧹 Cleaning build artifacts..."
 	rm -rf build/
 	rm -rf dist/
 	rm -rf *.egg-info/
-	rm -rf .coverage
-	rm -rf htmlcov/
 	rm -rf .pytest_cache/
 	rm -rf .mypy_cache/
+	rm -rf .ruff_cache/
+	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete
 
-docs:  ## Build documentation
-	cd docs && uv run sphinx-build -b html . _build
+docs:
+	@echo "📚 Building documentation..."
+	@echo "⚠️  Documentation build not yet configured"
 
-serve-docs:  ## Serve documentation locally
-	cd docs/_build && python -m http.server 8000
+build:
+	@echo "📦 Building package..."
+	uv build
 
-demo:  ## Run quick demo
-	uv run examples/quick_start.py
+publish: build
+	@echo "🚀 Publishing package..."
+	@echo "⚠️  Publishing not yet configured"
 
-validate:  ## Run strategy validation
-	uv run examples/best_strategy_validation.py
-
-cache-clear:  ## Clear RTradez cache
-	rm -rf ~/.rtradez/cache/
+# CI pipeline
+ci: clean install lint test-coverage
+	@echo "✅ CI pipeline completed successfully!"
 
 # Development workflow targets
-check: quality test  ## Run quality checks and tests
+dev-test: format lint test-unit
+	@echo "✅ Development test cycle completed!"
 
-fix: quality-fix  ## Apply all automatic fixes
-
-release-check:  ## Check if ready for release
-	$(MAKE) clean
-	$(MAKE) quality
-	$(MAKE) test-cov
-	@echo "✅ Release checks passed"
-
-# Examples
-examples:  ## Run all examples
-	@echo "Running sklearn interface demo..."
-	uv run examples/sklearn_interface_demo.py
-	@echo "Running caching demo..."
-	uv run examples/caching_and_optimization_demo.py
+quick-check: format lint test-quick
+	@echo "✅ Quick check completed!"

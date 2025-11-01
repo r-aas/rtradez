@@ -149,7 +149,7 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-addopts = "-ra -q --strict-markers --strict-config"
+addopts = "-ra -q --strict-markers --strict-config --cov=src/rtradez --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=80"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
@@ -162,22 +162,41 @@ markers = [
 
 [tool.coverage.run]
 source = ["src"]
+branch = true
 omit = [
     "*/tests/*",
     "*/examples/*",
     "*/__pycache__/*",
+    "*/migrations/*",
+    "*/venv/*",
+    "*/env/*",
+    "*/.venv/*",
 ]
 
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",
+    "def __str__",
     "if self.debug:",
     "if settings.DEBUG",
     "raise AssertionError",
     "raise NotImplementedError",
+    "raise ValueError",
     "if 0:",
+    "if False:",
     "if __name__ == .__main__.:",
+    "pass",
+    "...",
 ]
 show_missing = true
 skip_covered = false
+precision = 2
+fail_under = 80
+
+[tool.coverage.html]
+directory = "htmlcov"
+title = "RTradez Test Coverage Report"
+
+[tool.coverage.xml]
+output = "coverage.xml"

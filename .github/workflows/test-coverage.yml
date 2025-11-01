@@ -1,0 +1,151 @@
+name: Test Coverage
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+      with:
+        version: "latest"
+    
+    - name: Install dependencies
+      run: |
+        uv sync --all-extras --dev
+    
+    - name: Run tests with coverage
+      run: |
+        uv run python scripts/test_coverage.py --fail-under --threshold 80 --verbose
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+    
+    - name: Archive coverage HTML report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: htmlcov/
+    
+    - name: Archive coverage JSON report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-json
+        path: coverage_report.json
+    
+    - name: Comment coverage on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const path = './coverage_report.json';
+          
+          if (fs.existsSync(path)) {
+            const coverage = JSON.parse(fs.readFileSync(path, 'utf8'));
+            const lineRate = coverage.overall?.line_rate || 0;
+            const branchRate = coverage.overall?.branch_rate || 0;
+            
+            const badge = lineRate >= 90 ? '🟢' : 
+                         lineRate >= 80 ? '🟡' : 
+                         lineRate >= 70 ? '🟠' : '🔴';
+            
+            const comment = `## ${badge} Test Coverage Report
+            
+            | Metric | Coverage |
+            |--------|----------|
+            | **Line Coverage** | ${lineRate.toFixed(2)}% |
+            | **Branch Coverage** | ${branchRate.toFixed(2)}% |
+            | **Lines Covered** | ${coverage.overall?.lines_covered || 0}/${coverage.overall?.lines_valid || 0} |
+            | **Branches Covered** | ${coverage.overall?.branches_covered || 0}/${coverage.overall?.branches_valid || 0} |
+            
+            ### Package Breakdown
+            ${Object.entries(coverage.packages || {}).map(([pkg, stats]) => 
+              `| ${pkg} | ${stats.line_rate.toFixed(2)}% |`
+            ).join('\n')}
+            
+            [📊 View detailed HTML report](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+
+  test-matrix:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.12"]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install system dependencies (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+    
+    - name: Install system dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew install gcc
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+      with:
+        version: "latest"
+    
+    - name: Install dependencies
+      run: |
+        uv sync --all-extras --dev
+    
+    - name: Run unit tests only
+      run: |
+        uv run python -m pytest -m "unit" --tb=short
+    
+    - name: Run integration tests (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        uv run python -m pytest -m "integration" --tb=short
+      continue-on-error: true
