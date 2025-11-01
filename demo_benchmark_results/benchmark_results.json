@@ -1,0 +1,519 @@
+{
+  "summary": {
+    "total_benchmarks": 10,
+    "passed": 4,
+    "failed": 6,
+    "warnings": 10,
+    "success_rate": 0.4,
+    "total_duration": 10.997845,
+    "critical_failures": 1
+  },
+  "results": [
+    {
+      "name": "memory_baseline_usage",
+      "description": "Test baseline memory usage of components",
+      "status": "BenchmarkStatus.FAILED",
+      "severity": "BenchmarkSeverity.WARNING",
+      "start_time": "2025-11-01 12:03:25.840675",
+      "end_time": "2025-11-01 12:03:26.088003",
+      "duration": 0.247328,
+      "metrics": {
+        "execution_time": 0.2469360830145888,
+        "memory_peak": 0,
+        "memory_average": 0,
+        "cpu_usage_peak": 85.14706049969121,
+        "cpu_usage_average": 85.14706049969121,
+        "throughput": null,
+        "latency_p50": null,
+        "latency_p95": null,
+        "latency_p99": null,
+        "error_rate": 1.0,
+        "custom_metrics": {}
+      },
+      "error_message": "Component baseline memory 2850.8MB exceeds 50.0MB",
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63703662592,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:25.841011"
+      },
+      "passed": false,
+      "warnings": [
+        "Error rate 100.0% exceeds limit 1.0%"
+      ],
+      "details": {}
+    },
+    {
+      "name": "memory_growth_patterns",
+      "description": "Test memory growth patterns under load",
+      "status": "BenchmarkStatus.COMPLETED",
+      "severity": "BenchmarkSeverity.ERROR",
+      "start_time": "2025-11-01 12:03:26.088208",
+      "end_time": "2025-11-01 12:03:26.621883",
+      "duration": 0.533675,
+      "metrics": {
+        "execution_time": 0.5328208330320194,
+        "memory_peak": 0,
+        "memory_average": 0,
+        "cpu_usage_peak": 97.5526300355387,
+        "cpu_usage_average": 97.5526300355387,
+        "throughput": null,
+        "latency_p50": 532.8134999726899,
+        "latency_p95": 532.8134999726899,
+        "latency_p99": 532.8134999726899,
+        "error_rate": 0.0,
+        "custom_metrics": {}
+      },
+      "error_message": null,
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63703662592,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:26.088768"
+      },
+      "passed": true,
+      "warnings": [
+        "P95 latency 532.8ms exceeds limit 100.0ms"
+      ],
+      "details": {}
+    },
+    {
+      "name": "memory_leak_detection",
+      "description": "Test for memory leaks in repeated operations",
+      "status": "BenchmarkStatus.FAILED",
+      "severity": "BenchmarkSeverity.CRITICAL",
+      "start_time": "2025-11-01 12:03:26.622018",
+      "end_time": "2025-11-01 12:03:27.464287",
+      "duration": 0.842269,
+      "metrics": {
+        "execution_time": 0.84169941698201,
+        "memory_peak": 70117,
+        "memory_average": 58912,
+        "cpu_usage_peak": 100.03980981942404,
+        "cpu_usage_average": 100.03980981942404,
+        "throughput": null,
+        "latency_p50": null,
+        "latency_p95": null,
+        "latency_p99": null,
+        "error_rate": 1.0,
+        "custom_metrics": {}
+      },
+      "error_message": "dictionary changed size during iteration",
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63702941696,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:26.622393"
+      },
+      "passed": false,
+      "warnings": [
+        "Error rate 100.0% exceeds limit 1.0%"
+      ],
+      "details": {}
+    },
+    {
+      "name": "object_lifecycle_memory",
+      "description": "Test object lifecycle memory management",
+      "status": "BenchmarkStatus.FAILED",
+      "severity": "BenchmarkSeverity.ERROR",
+      "start_time": "2025-11-01 12:03:27.464415",
+      "end_time": "2025-11-01 12:03:27.730979",
+      "duration": 0.266564,
+      "metrics": {
+        "execution_time": 0.2655012909672223,
+        "memory_peak": 30541056,
+        "memory_average": 134181,
+        "cpu_usage_peak": 100.02647558982272,
+        "cpu_usage_average": 100.02647558982272,
+        "throughput": null,
+        "latency_p50": null,
+        "latency_p95": null,
+        "latency_p99": null,
+        "error_rate": 1.0,
+        "custom_metrics": {}
+      },
+      "error_message": "Memory release efficiency 0.0% below 70.0%",
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63702941696,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:27.464792"
+      },
+      "passed": false,
+      "warnings": [
+        "Error rate 100.0% exceeds limit 1.0%"
+      ],
+      "details": {}
+    },
+    {
+      "name": "garbage_collection_efficiency",
+      "description": "Test garbage collection efficiency",
+      "status": "BenchmarkStatus.FAILED",
+      "severity": "BenchmarkSeverity.WARNING",
+      "start_time": "2025-11-01 12:03:27.731120",
+      "end_time": "2025-11-01 12:03:28.874147",
+      "duration": 1.143027,
+      "metrics": {
+        "execution_time": 1.1413952500442974,
+        "memory_peak": 13575004,
+        "memory_average": 406147,
+        "cpu_usage_peak": 100.05259089309169,
+        "cpu_usage_average": 100.05259089309169,
+        "throughput": null,
+        "latency_p50": null,
+        "latency_p95": null,
+        "latency_p99": null,
+        "error_rate": 1.0,
+        "custom_metrics": {}
+      },
+      "error_message": "GC efficiency 0.0% below 50.0%",
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63677956096,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:27.731503"
+      },
+      "passed": false,
+      "warnings": [
+        "Error rate 100.0% exceeds limit 1.0%"
+      ],
+      "details": {}
+    },
+    {
+      "name": "gc_pressure_response",
+      "description": "Test system response to GC pressure",
+      "status": "BenchmarkStatus.FAILED",
+      "severity": "BenchmarkSeverity.WARNING",
+      "start_time": "2025-11-01 12:03:28.874329",
+      "end_time": "2025-11-01 12:03:29.241866",
+      "duration": 0.367537,
+      "metrics": {
+        "execution_time": 0.3669368329574354,
+        "memory_peak": 97880,
+        "memory_average": 14121,
+        "cpu_usage_peak": 100.0249936867385,
+        "cpu_usage_average": 100.0249936867385,
+        "throughput": null,
+        "latency_p50": null,
+        "latency_p95": null,
+        "latency_p99": null,
+        "error_rate": 1.0,
+        "custom_metrics": {}
+      },
+      "error_message": "GC pressure impact 193.2x exceeds 3.0x",
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63679758336,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:28.874740"
+      },
+      "passed": false,
+      "warnings": [
+        "Error rate 100.0% exceeds limit 1.0%"
+      ],
+      "details": {}
+    },
+    {
+      "name": "large_dataset_memory",
+      "description": "Test memory usage with large datasets",
+      "status": "BenchmarkStatus.COMPLETED",
+      "severity": "BenchmarkSeverity.ERROR",
+      "start_time": "2025-11-01 12:03:29.242006",
+      "end_time": "2025-11-01 12:03:29.504108",
+      "duration": 0.262102,
+      "metrics": {
+        "execution_time": 0.26139033399522305,
+        "memory_peak": 0,
+        "memory_average": 0,
+        "cpu_usage_peak": 93.07993462545154,
+        "cpu_usage_average": 93.07993462545154,
+        "throughput": null,
+        "latency_p50": 261.3851670175791,
+        "latency_p95": 261.3851670175791,
+        "latency_p99": 261.3851670175791,
+        "error_rate": 0.0,
+        "custom_metrics": {}
+      },
+      "error_message": null,
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63680069632,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:29.242452"
+      },
+      "passed": true,
+      "warnings": [
+        "P95 latency 261.4ms exceeds limit 100.0ms"
+      ],
+      "details": {}
+    },
+    {
+      "name": "streaming_data_memory",
+      "description": "Test memory usage in streaming data scenarios",
+      "status": "BenchmarkStatus.COMPLETED",
+      "severity": "BenchmarkSeverity.ERROR",
+      "start_time": "2025-11-01 12:03:29.504241",
+      "end_time": "2025-11-01 12:03:30.064876",
+      "duration": 0.560635,
+      "metrics": {
+        "execution_time": 0.5586334170075133,
+        "memory_peak": 590295,
+        "memory_average": 480641,
+        "cpu_usage_peak": 100.0229343588464,
+        "cpu_usage_average": 100.0229343588464,
+        "throughput": null,
+        "latency_p50": 558.6271659703925,
+        "latency_p95": 558.6271659703925,
+        "latency_p99": 558.6271659703925,
+        "error_rate": 0.0,
+        "custom_metrics": {}
+      },
+      "error_message": null,
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63680069632,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:29.504627"
+      },
+      "passed": true,
+      "warnings": [
+        "P95 latency 558.6ms exceeds limit 100.0ms"
+      ],
+      "details": {}
+    },
+    {
+      "name": "memory_allocation_efficiency",
+      "description": "Test memory allocation and deallocation efficiency",
+      "status": "BenchmarkStatus.COMPLETED",
+      "severity": "BenchmarkSeverity.WARNING",
+      "start_time": "2025-11-01 12:03:30.065013",
+      "end_time": "2025-11-01 12:03:30.229833",
+      "duration": 0.16482,
+      "metrics": {
+        "execution_time": 0.1640915830503218,
+        "memory_peak": 8053192,
+        "memory_average": 3364,
+        "cpu_usage_peak": 100.05663236831307,
+        "cpu_usage_average": 100.05663236831307,
+        "throughput": null,
+        "latency_p50": 164.08483299892396,
+        "latency_p95": 164.08483299892396,
+        "latency_p99": 164.08483299892396,
+        "error_rate": 0.0,
+        "custom_metrics": {}
+      },
+      "error_message": null,
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63739953152,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:30.065409"
+      },
+      "passed": true,
+      "warnings": [
+        "P95 latency 164.1ms exceeds limit 100.0ms"
+      ],
+      "details": {}
+    },
+    {
+      "name": "peak_memory_optimization",
+      "description": "Test peak memory usage optimization",
+      "status": "BenchmarkStatus.FAILED",
+      "severity": "BenchmarkSeverity.ERROR",
+      "start_time": "2025-11-01 12:03:30.229965",
+      "end_time": "2025-11-01 12:03:36.838370",
+      "duration": 6.608405,
+      "metrics": {
+        "execution_time": 6.607835582981352,
+        "memory_peak": 0,
+        "memory_average": 0,
+        "cpu_usage_peak": 99.82562182674425,
+        "cpu_usage_average": 99.82562182674425,
+        "throughput": null,
+        "latency_p50": null,
+        "latency_p95": null,
+        "latency_p99": null,
+        "error_rate": 1.0,
+        "custom_metrics": {}
+      },
+      "error_message": "Memory optimization improvement -0.7% below 20.0%",
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63739953152,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891697664,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:30.230428"
+      },
+      "passed": false,
+      "warnings": [
+        "Error rate 100.0% exceeds limit 1.0%"
+      ],
+      "details": {}
+    }
+  ],
+  "critical_failures": [
+    {
+      "name": "memory_leak_detection",
+      "description": "Test for memory leaks in repeated operations",
+      "status": "BenchmarkStatus.FAILED",
+      "severity": "BenchmarkSeverity.CRITICAL",
+      "start_time": "2025-11-01 12:03:26.622018",
+      "end_time": "2025-11-01 12:03:27.464287",
+      "duration": 0.842269,
+      "metrics": {
+        "execution_time": 0.84169941698201,
+        "memory_peak": 70117,
+        "memory_average": 58912,
+        "cpu_usage_peak": 100.03980981942404,
+        "cpu_usage_average": 100.03980981942404,
+        "throughput": null,
+        "latency_p50": null,
+        "latency_p95": null,
+        "latency_p99": null,
+        "error_rate": 1.0,
+        "custom_metrics": {}
+      },
+      "error_message": "dictionary changed size during iteration",
+      "error_traceback": null,
+      "system_info": {
+        "cpu_count": 16,
+        "cpu_freq": 4,
+        "memory_total": 137438953472,
+        "memory_available": 63702941696,
+        "disk_usage": {
+          "total": 994662584320,
+          "used": 15009464320,
+          "free": 31891668992,
+          "percent": 32.0
+        },
+        "python_version": "3.12",
+        "platform": "darwin",
+        "timestamp": "2025-11-01 12:03:26.622393"
+      },
+      "passed": false,
+      "warnings": [
+        "Error rate 100.0% exceeds limit 1.0%"
+      ],
+      "details": {}
+    }
+  ],
+  "timestamp": "2025-11-01T12:03:36.838566",
+  "config": {
+    "max_execution_time": 60.0,
+    "memory_limit_mb": 2048,
+    "cpu_timeout": 60.0,
+    "stress_iterations": 100,
+    "concurrent_operations": 10,
+    "data_scale_factors": [
+      1.0,
+      10.0,
+      100.0
+    ],
+    "max_latency_ms": 100.0,
+    "min_throughput": 100.0,
+    "max_memory_growth_mb": 100.0,
+    "max_error_rate": 0.01,
+    "save_detailed_logs": true,
+    "output_directory": "demo_benchmark_results",
+    "generate_plots": true
+  }
+}

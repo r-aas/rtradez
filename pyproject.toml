@@ -33,16 +33,23 @@ dependencies = [
     "optuna-integration[mlflow]>=4.5.0",
     "pandas>=2.3.3",
     "plotly>=6.3.1",
+    "psutil>=7.1.2",
     "py-vollib>=1.0.1",
+    "pydantic>=2.12.3",
     "pyfolio-reloaded>=0.9.9",
     "quantlib-python>=1.18",
     "quantstats>=0.0.77",
+    "rich>=14.2.0",
     "scipy>=1.16.3",
     "seaborn>=0.13.2",
     "ta>=0.11.0",
+    "typer>=0.20.0",
     "vectorbt>=0.28.1",
     "yfinance>=0.2.66",
 ]
+
+[project.scripts]
+rtradez = "rtradez.cli:main"
 
 [dependency-groups]
 dev = [

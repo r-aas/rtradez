@@ -1,150 +1,137 @@
-"""Pytest configuration and fixtures for RTradez test suite."""
+"""Pytest configuration and fixtures for RTradez tests."""
 
 import pytest
 import pandas as pd
 import numpy as np
+from unittest.mock import Mock
 from datetime import datetime, timedelta
-from typing import Tuple
-
-from rtradez.datasets.core import OptionsDataset
-from rtradez.methods.strategies import OptionsStrategy
 
 
 @pytest.fixture
-def sample_market_data() -> pd.DataFrame:
-    """Create sample market data for testing."""
-    dates = pd.date_range(start='2023-01-01', periods=100, freq='D')
+def sample_data():
+    """Provide sample data for tests."""
     np.random.seed(42)
     
-    # Create realistic market data
-    prices = 100 * np.cumprod(1 + np.random.normal(0, 0.02, 100))
-    volumes = np.random.lognormal(10, 1, 100)
+    # Generate sample time series data
+    dates = pd.bdate_range(start='2023-01-01', end='2023-12-31')
+    n_samples = len(dates)
     
-    data = pd.DataFrame({
-        'date': dates,
-        'open': prices * (1 + np.random.normal(0, 0.005, 100)),
-        'high': prices * (1 + np.abs(np.random.normal(0, 0.01, 100))),
-        'low': prices * (1 - np.abs(np.random.normal(0, 0.01, 100))),
-        'close': prices,
+    # Market data
+    prices = 100 * np.cumprod(1 + np.random.normal(0.001, 0.02, n_samples))
+    volumes = np.random.exponential(1000000, n_samples)
+    
+    # Feature matrix
+    X = pd.DataFrame({
+        'price': prices,
         'volume': volumes,
         'returns': np.concatenate([[0], np.diff(np.log(prices))]),
-        'volatility': np.random.uniform(0.1, 0.5, 100)
-    })
+        'volatility': pd.Series(np.random.normal(0.001, 0.02, n_samples)).rolling(20).std(),
+        'feature_1': np.random.normal(0, 1, n_samples),
+        'feature_2': np.random.normal(0, 1, n_samples),
+    }, index=dates)
     
-    return data.set_index('date')
+    # Target variable (returns)
+    y = pd.Series(X['returns'].values, index=dates)
+    
+    # Predictions
+    y_pred = y + np.random.normal(0, 0.001, len(y))
+    
+    # Returns for financial metrics
+    returns = pd.Series(np.random.normal(0.001, 0.02, n_samples), index=dates)
+    
+    return {
+        'X': X,
+        'y': y,
+        'y_pred': y_pred,
+        'returns': returns,
+        'prices': pd.Series(prices, index=dates),
+        'volumes': pd.Series(volumes, index=dates),
+        'dates': dates,
+        
+        # Common parameters for different class types
+        'init_params': {},
+        'strategy_params': {'strategy_type': 'iron_condor'},
+        'transformer_params': {},
+        'metric_params': {},
+        'provider_params': {},
+        'validator_params': {},
+        
+        # Method-specific parameters
+        'fit_params': {},
+        'predict_params': {},
+        'transform_params': {},
+        'fetch_params': {
+            'symbol': 'SPY',
+            'start_date': '2023-01-01',
+            'end_date': '2023-12-31'
+        },
+        
+        # Mock API response
+        'api_response': {
+            'data': [
+                {'date': '2023-01-01', 'value': 100},
+                {'date': '2023-01-02', 'value': 101},
+            ]
+        },
+        
+        # Mock model
+        'mock_model': Mock()
+    }
 
 
 @pytest.fixture
-def sample_options_data() -> pd.DataFrame:
-    """Create sample options chain data for testing."""
-    dates = pd.date_range(start='2023-01-01', periods=50, freq='D')
-    strikes = np.arange(90, 111, 2.5)
+def sample_datasets():
+    """Provide sample datasets for multi-source testing."""
+    dates = pd.bdate_range(start='2023-01-01', end='2023-12-31')
     
-    data = []
-    for date in dates:
-        spot_price = 100 + np.random.normal(0, 5)
-        for strike in strikes:
-            # Create call and put data
-            for option_type in ['call', 'put']:
-                moneyness = strike / spot_price
-                if option_type == 'call':
-                    intrinsic = max(0, spot_price - strike)
-                else:
-                    intrinsic = max(0, strike - spot_price)
-                
-                # Simple implied volatility model
-                iv = 0.2 + 0.1 * abs(1 - moneyness)
-                
-                data.append({
-                    'date': date,
-                    'strike': strike,
-                    'option_type': option_type,
-                    'bid': max(0.01, intrinsic + np.random.uniform(0, 2)),
-                    'ask': max(0.02, intrinsic + np.random.uniform(1, 3)),
-                    'implied_volatility': iv,
-                    'delta': np.random.uniform(0, 1) if option_type == 'call' else np.random.uniform(-1, 0),
-                    'gamma': np.random.uniform(0, 0.1),
-                    'theta': np.random.uniform(-0.1, 0),
-                    'vega': np.random.uniform(0, 0.5),
-                    'volume': np.random.poisson(10),
-                    'open_interest': np.random.poisson(100)
-                })
+    # Daily data
+    daily_data = pd.DataFrame({
+        'close': 100 * np.cumprod(1 + np.random.normal(0.001, 0.02, len(dates))),
+        'volume': np.random.exponential(1000000, len(dates))
+    }, index=dates)
     
-    return pd.DataFrame(data)
+    # Weekly data
+    weekly_dates = pd.date_range(start='2023-01-01', end='2023-12-31', freq='W')
+    weekly_data = pd.DataFrame({
+        'economic_indicator': np.random.normal(50, 10, len(weekly_dates))
+    }, index=weekly_dates)
+    
+    # Monthly data
+    monthly_dates = pd.date_range(start='2023-01-01', end='2023-12-31', freq='M')
+    monthly_data = pd.DataFrame({
+        'sentiment': np.random.normal(0, 1, len(monthly_dates))
+    }, index=monthly_dates)
+    
+    return {
+        'daily': daily_data,
+        'weekly': weekly_data,
+        'monthly': monthly_data
+    }
 
 
 @pytest.fixture
-def sample_features_and_returns() -> Tuple[pd.DataFrame, pd.Series]:
-    """Create sample feature matrix and returns series for testing."""
-    np.random.seed(42)
-    n_samples = 100
-    
-    # Create features
-    features = pd.DataFrame({
-        'rsi': np.random.uniform(20, 80, n_samples),
-        'macd': np.random.normal(0, 1, n_samples),
-        'bb_position': np.random.uniform(0, 1, n_samples),
-        'volatility': np.random.uniform(0.1, 0.5, n_samples),
-        'volume_ratio': np.random.uniform(0.5, 2, n_samples),
-        'price_momentum': np.random.normal(0, 0.02, n_samples)
-    })
-    
-    # Create returns correlated with features
-    returns = (
-        0.01 * features['rsi'] / 50 - 0.01 +
-        0.005 * features['macd'] +
-        np.random.normal(0, 0.02, n_samples)
-    )
-    
-    dates = pd.date_range(start='2023-01-01', periods=n_samples, freq='D')
-    features.index = dates
-    returns.index = dates
-    
-    return features, returns
-
-
-@pytest.fixture
-def sample_strategy() -> OptionsStrategy:
-    """Create a sample options strategy for testing."""
-    return OptionsStrategy(
-        strategy_type='iron_condor',
-        profit_target=0.35,
-        stop_loss=2.0,
-        dte_range=(20, 40)
-    )
-
-
-@pytest.fixture
-def mock_dataset(sample_market_data, sample_options_data) -> OptionsDataset:
-    """Create a mock OptionsDataset for testing."""
-    dataset = OptionsDataset('TEST', sample_market_data.index[0], sample_market_data.index[-1])
-    dataset.market_data = sample_market_data
-    dataset.options_data = sample_options_data
-    return dataset
-
-
-# Test markers
-def pytest_configure(config):
-    """Configure pytest markers."""
-    config.addinivalue_line("markers", "unit: Unit tests")
-    config.addinivalue_line("markers", "integration: Integration tests") 
-    config.addinivalue_line("markers", "slow: Slow-running tests")
-
-
-# Skip slow tests by default
-def pytest_collection_modifyitems(config, items):
-    """Modify test collection to handle markers."""
-    if config.getoption("--runslow"):
-        return
-    
-    skip_slow = pytest.mark.skip(reason="need --runslow option to run")
-    for item in items:
-        if "slow" in item.keywords:
-            item.add_marker(skip_slow)
-
-
-def pytest_addoption(parser):
-    """Add command line options."""
-    parser.addoption(
-        "--runslow", action="store_true", default=False, help="run slow tests"
-    )
+def mock_api_responses():
+    """Mock API responses for data providers."""
+    return {
+        'fred': {
+            'observations': [
+                {'date': '2023-01-01', 'value': '2.5'},
+                {'date': '2023-01-02', 'value': '2.6'},
+            ]
+        },
+        'alpha_vantage': {
+            'Time Series (Daily)': {
+                '2023-01-01': {'4. close': '100.00'},
+                '2023-01-02': {'4. close': '101.00'},
+            }
+        },
+        'news_api': {
+            'articles': [
+                {
+                    'title': 'Market update',
+                    'description': 'Positive market sentiment',
+                    'publishedAt': '2023-01-01T10:00:00Z'
+                }
+            ]
+        }
+    }

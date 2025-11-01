@@ -41,7 +41,8 @@ class RTradezOptimizer:
                  storage_url: Optional[str] = None,
                  sampler_type: str = "tpe",
                  pruner_type: str = "median",
-                 n_startup_trials: int = 10):
+                 n_startup_trials: int = 10,
+                 direction: str = "maximize"):
         """
         Initialize optimizer.
         
@@ -51,9 +52,11 @@ class RTradezOptimizer:
             sampler_type: Sampling algorithm ('tpe', 'cmaes', 'random')
             pruner_type: Pruning algorithm ('median', 'successive_halving', 'none')
             n_startup_trials: Number of random trials before using advanced sampling
+            direction: Optimization direction ('maximize' or 'minimize')
         """
         self.study_name = study_name or f"rtradez_study_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         self.storage_url = storage_url
+        self.direction = direction
         
         # Configure sampler
         self.sampler = self._create_sampler(sampler_type, n_startup_trials)
@@ -95,14 +98,14 @@ class RTradezOptimizer:
                 study_name=self.study_name,
                 storage=self.storage_url,
                 load_if_exists=True,
-                direction="maximize",
+                direction=self.direction,
                 sampler=self.sampler,
                 pruner=self.pruner
             )
         else:
             # Local optimization
             self.study = optuna.create_study(
-                direction="maximize",
+                direction=self.direction,
                 sampler=self.sampler,
                 pruner=self.pruner
             )
@@ -290,6 +293,14 @@ class RTradezOptimizer:
         
     def plot_optimization_history(self):
         """Plot optimization history."""
+        if self.study is None:
+            logger.warning("No study available. Run optimization first.")
+            return
+            
+        if len(self.study.trials) == 0:
+            logger.warning("No trials in study. Run optimization to generate data for plotting.")
+            return
+            
         try:
             import plotly.graph_objects as go
             from optuna.visualization import plot_optimization_history, plot_param_importances
@@ -298,12 +309,18 @@ class RTradezOptimizer:
             fig1 = plot_optimization_history(self.study)
             fig1.show()
             
-            # Plot parameter importances
-            fig2 = plot_param_importances(self.study)
-            fig2.show()
+            # Plot parameter importances (only if there are completed trials)
+            completed_trials = [t for t in self.study.trials if t.state == optuna.trial.TrialState.COMPLETE]
+            if len(completed_trials) > 1:
+                fig2 = plot_param_importances(self.study)
+                fig2.show()
+            else:
+                logger.info("Need at least 2 completed trials to plot parameter importances.")
             
         except ImportError:
             logger.warning("Plotly not available for visualization")
+        except Exception as e:
+            logger.error(f"Error creating plots: {e}")
             
     def save_study(self, filepath: str):
         """Save study to file."""

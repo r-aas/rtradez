@@ -1,0 +1,11 @@
+name,status,duration,passed,warnings,memory_peak_mb,cpu_usage,latency_p95
+memory_baseline_usage,failed,0.247328,False,1,0.0,85.14706049969121,
+memory_growth_patterns,completed,0.533675,True,1,0.0,97.5526300355387,532.8134999726899
+memory_leak_detection,failed,0.842269,False,1,0.06686878204345703,100.03980981942404,
+object_lifecycle_memory,failed,0.266564,False,1,29.126220703125,100.02647558982272,
+garbage_collection_efficiency,failed,1.143027,False,1,12.94613265991211,100.05259089309169,
+gc_pressure_response,failed,0.367537,False,1,0.09334564208984375,100.0249936867385,
+large_dataset_memory,completed,0.262102,True,1,0.0,93.07993462545154,261.3851670175791
+streaming_data_memory,completed,0.560635,True,1,0.5629491806030273,100.0229343588464,558.6271659703925
+memory_allocation_efficiency,completed,0.16482,True,1,7.680122375488281,100.05663236831307,164.08483299892396
+peak_memory_optimization,failed,6.608405,False,1,0.0,99.82562182674425,
